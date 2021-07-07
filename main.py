@@ -106,6 +106,7 @@ class _DataHandler(object):
 					wf.write(tf.read())
 					wf.close()
 				tf.close()
+		td.close()
 
 def main():
 	found: int = 0
