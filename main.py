@@ -1,7 +1,7 @@
 from sys import exit, argv
 from typing import Optional, Union
 
-import json, os, tempfile
+import json, os, tempfile, glob
 
 
 class _InputFileHandler(object):
@@ -19,6 +19,9 @@ class _InputFileHandler(object):
 		with open(self.filename, "r") as r:
 			data = json.loads(r.read())
 			r.close()
+		if (data["files"][0] == "*"):
+			path = data["path"]
+			data["files"] = glob.glob(f"{path}/*.txt")
 		return data
 
 
