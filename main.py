@@ -4,9 +4,6 @@ from typing import Optional, Union
 import json, os, tempfile
 
 
-FOUND: int = 0
-
-
 class _InputFileHandler(object):
 	def __init__(self: object, filename: str):
 		assert isinstance(filename, str), "Variable: \"filename\" was not a string"
@@ -52,15 +49,28 @@ class _DataHandler(object):
 		@return: (list[int], int), an touple of the filtered list and how many duplicats were removed
 		"""
 		assert isinstance(numList, list), "Variable : \"numList\" was not a list"
-		res = list(map(lambda x: x, numList))
+		res: list[int] = []
 		dups = 0
 		for i in range(len(numList)):
-			# print(len(res), "\n", res)
 			for n in range(i+1, len(numList)):
 				if (numList[i] == numList[n]):
-					res.pop(n)
+					res.append(n)
 					dups += 1
 		return (res, dups)
+
+	def removeCopies(numList: list[int], remList: list[int]) -> Union[list[int], bool]:
+		"""
+		Loops over the remList and removes the positions in numList, based on remLists values\n
+		@param numList: list[int], the list to be removed from\n
+		@param remList: list[int], contains the indexes of the items to be removed\n
+		@return: Union[list[int], bool], returns the filterd list, or False if the were not changes made
+		"""
+		if (len(remList) == 0):
+			return False
+		res = list(map(lambda x: str(x), numList))
+		for i in range(len(remList)-1, -1, -1):
+			res.pop(remList[i])
+		return res
 
 	def reWriteInputFile(filename: str, data: list[int], startLine:int) -> None:
 		"""
@@ -98,7 +108,7 @@ class _DataHandler(object):
 				tf.close()
 
 def main():
-	global FOUND
+	found: int = 0
 	args = list(map(lambda x: x.lower(), argv))
 	try:
 		file: str = args[args.index("-f")+1]
@@ -123,10 +133,16 @@ def main():
 			print({"Message": f"There were no provinces in the {file}", "Function": "_DataHandler.findData()", "FailCode": 2})
 			continue
 		data = data.split(" ")
-		res, FOUND = _DataHandler.findCopy(data)
-		_DataHandler.reWriteInputFile(file, data, line)
+		rem, tempFound = _DataHandler.findCopy(data)
+		found += tempFound
+		correctData = _DataHandler.removeCopies(data, rem)
+		if (not correctData):
+			print({"Message": f"there were no copys in the file {file}", "Function": "_DataHandler.findData()", "FailCode": 0})
+			continue
+		else:
+			_DataHandler.reWriteInputFile(f"{rootPath}/{file}", correctData, line)
+	return found
 
 if __name__ == '__main__':
-	found: int = FOUND
-	main()
+	found: int = main()
 	exit({"Message": f"Task compleat, found {found} copys",	"ExitCode": 0})
