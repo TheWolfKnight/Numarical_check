@@ -149,4 +149,4 @@ def main():
 
 if __name__ == '__main__':
 	found: int = main()
-	exit({"Message": f"Task compleat, found {found} copys",	"ExitCode": 0})
+	exit({"Message": f"Task complete, found {found} copys",	"ExitCode": 0})
