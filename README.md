@@ -7,7 +7,7 @@
 (Example)
 
 {
-  "path": Optional[str]
+  "path": Optional[str],
   "files": [LIST OF FILES]
 }
 
