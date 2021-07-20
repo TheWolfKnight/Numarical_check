@@ -22,6 +22,7 @@ class _InputFileHandler(object):
 		if (data["files"][0] == "*"):
 			path = data["path"]
 			data["files"] = glob.glob(f"{path}/*.txt")
+			data["path"] = None
 		return data
 
 
@@ -109,7 +110,7 @@ class _DataHandler(object):
 					wf.write(tf.read())
 					wf.close()
 				tf.close()
-		td.close()
+
 
 def main():
 	found: int = 0
